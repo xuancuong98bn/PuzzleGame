@@ -21,6 +21,8 @@ import java.util.logging.Logger;
 import javafx.scene.input.ClipboardContent;
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
 
 /**
  *
@@ -82,23 +84,28 @@ public class Controller {
     }
 
     public void control() {
-//        try {
-////                rows = Integer.parseInt(caro.getTxtSizeBoard().getText());
-//                if (sizeBoard < 2) throw new NumberFormatException();
-//            } catch (NumberFormatException nfex) {
-//                sizeBoard = 10;
-//            }
         puzzle.getBtnSetting().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 setting();
+                puzzle.getBtnRestart().setEnabled(false);
+                puzzle.getBtnStart().setEnabled(true);
             }
         });
+
+        puzzle.getBtnRestart().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                randomBoard();
+            }
+        });
+
         puzzle.getBtnStart().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 randomBoard();
-
+                puzzle.getBtnRestart().setEnabled(true);
+                puzzle.getBtnStart().setEnabled(false);
                 buttonEmpty.setBackground(Color.red);
             }
         });
@@ -107,11 +114,14 @@ public class Controller {
     private void setBoard() {
         btnArray = new JButton[rows][cols];
         BufferedImage[] imgs = getImages();
+        idenBtn.clear();
         int count = 0;
+        int sizeWidth = calChunkWidth();
+        int sizeHeight = calChunkHeigh();
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 btnArray[i][j] = new JButton("");
-                btnArray[i][j].setPreferredSize(new Dimension(65, 65));
+                btnArray[i][j].setPreferredSize(new Dimension(sizeWidth, sizeHeight));
                 btnArray[i][j].setIcon(new ImageIcon(imgs[count]));
                 idenBtn.put(count++, btnArray[i][j]);
                 btnArray[i][j].setMargin(new Insets(2, 2, 2, 2));
@@ -125,22 +135,13 @@ public class Controller {
         btnSufArray = new JButton[rows][cols];
         puzzle.getPnlPlayArea().removeAll();
         puzzle.getPnlPlayArea().setLayout(new GridLayout(rows, cols, 0, 0));
-        puzzle.getPnlPlayArea().setSize(rows * 65, cols * 65);
+        puzzle.getPnlPlayArea().setSize(rows * calChunkWidth(), cols * calChunkHeigh());
         int count = 0;
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 JButton btn = (JButton) idenBtn.get(listkey.get(count++));
                 puzzle.getPnlPlayArea().add(btn);
                 btnSufArray[i][j] = btn;
-//                final int ii = i;
-//                final int jj = j;
-//                final int posi = count - 1;
-//                btnSufArray[i][j].addActionListener((ActionEvent e) -> {
-//                    if (checkMove(btnSufArray[ii][jj], ii, jj)) {
-////                        System.out.println("huhu");
-//                        swapButton(posi);
-//                    }
-//                });
             }
         }
         addActionForSufArray();
@@ -270,24 +271,24 @@ public class Controller {
     }
 
     public BufferedImage[] getImages() {
-        File file = new File(imagePath);
-        FileInputStream fis = null;
-        try {
-            fis = new FileInputStream(file);
-
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(GridImage.class
-                    .getName()).log(Level.SEVERE, null, ex);
-        }
-        BufferedImage image = null;
-        try {
-            image = ImageIO.read(fis);
-
-        } catch (IOException ex) {
-            Logger.getLogger(GridImage.class
-                    .getName()).log(Level.SEVERE, null, ex);
-        }
-//        image = (BufferedImage) image.getScaledInstance(640, 640, Image.SCALE_SMOOTH);
+//        File file = new File(imagePath);
+//        FileInputStream fis = null;
+//        try {
+//            fis = new FileInputStream(file);
+//
+//        } catch (FileNotFoundException ex) {
+//            Logger.getLogger(GridImage.class
+//                    .getName()).log(Level.SEVERE, null, ex);
+//        }
+//        BufferedImage image = null;
+//        try {
+//            image = ImageIO.read(fis);
+//
+//        } catch (IOException ex) {
+//            Logger.getLogger(GridImage.class
+//                    .getName()).log(Level.SEVERE, null, ex);
+//        }
+        BufferedImage image = inputImage();
         int chunkWidth = image.getWidth() / cols;
         int chunkHeight = image.getHeight() / rows;
         int count = 0;
@@ -306,6 +307,35 @@ public class Controller {
         return imgs;
     }
 
+    private BufferedImage inputImage() {
+        File file = new File(imagePath);
+        FileInputStream fis = null;
+        try {
+            fis = new FileInputStream(file);
+
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(GridImage.class
+                    .getName()).log(Level.SEVERE, null, ex);
+        }
+        BufferedImage image = null;
+        try {
+            image = ImageIO.read(fis);
+
+        } catch (IOException ex) {
+            Logger.getLogger(GridImage.class
+                    .getName()).log(Level.SEVERE, null, ex);
+        }
+        return image;
+    }
+
+    private int calChunkWidth() {
+        return inputImage().getWidth() / cols;
+    }
+
+    private int calChunkHeigh() {
+        return inputImage().getHeight() / rows;
+    }
+
     public static void main(String[] args) {
         Controller controller = new Controller();
         controller.control();
@@ -316,7 +346,7 @@ public class Controller {
                 "./image/background4.png", "./image/background5.png"};
 
     private final String defaultImg = listImage[0];
-    private final int defaultCellHorizon = 10;
-    private final int defaultCellVertical = 10;
+    private final int defaultCellHorizon = 3;
+    private final int defaultCellVertical = 3;
 
 }
