@@ -30,7 +30,7 @@ import javax.swing.event.CaretListener;
  *
  * @author MTC
  */
-public class Controller {
+public class Controller2 {
 
     Interface puzzle;
     Setting setting;
@@ -51,7 +51,7 @@ public class Controller {
     boolean timeStart;
     int timeCount;
 
-    public Controller() {
+    public Controller2() {
         puzzle = new Interface();
         setting = new Setting();
         idenBtn = new HashMap();
@@ -81,7 +81,7 @@ public class Controller {
                         try {
                             sleep(1000);
                         } catch (InterruptedException ex) {
-                            Logger.getLogger(Controller.class.getName()).log(Level.SEVERE, null, ex);
+                            Logger.getLogger(Controller2.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     }
                 }
@@ -160,7 +160,7 @@ public class Controller {
     }
 
     private void setBoard() {
-        btnArray = new JButton[rows][cols + 1];
+        btnArray = new JButton[rows][cols];
         BufferedImage[] imgs = getImages();
         idenBtn.clear();
         int count = 0;
@@ -168,19 +168,12 @@ public class Controller {
         int sizeWidth = calChunkWidth();
         int sizeHeight = calChunkHeigh();
         for (int i = 0; i < rows; i++) {
-            for (int j = 0; j <= cols; j++) {
-                if (j == 0) {
-                    btnArray[i][j] = new JButton("");
-                    btnArray[i][j].setPreferredSize(new Dimension(sizeWidth, sizeHeight));
-                    idenBtn.put(count++, btnArray[i][j]);
-                    btnArray[i][j].setMargin(new Insets(2, 2, 2, 2));
-                } else {
-                    btnArray[i][j] = new JButton("");
-                    btnArray[i][j].setPreferredSize(new Dimension(sizeWidth, sizeHeight));
-                    btnArray[i][j].setIcon(new ImageIcon(imgs[countImg++]));
-                    idenBtn.put(count++, btnArray[i][j]);
-                    btnArray[i][j].setMargin(new Insets(2, 2, 2, 2));
-                }
+            for (int j = 0; j < cols; j++) {
+                btnArray[i][j] = new JButton("");
+                btnArray[i][j].setPreferredSize(new Dimension(sizeWidth, sizeHeight));
+                btnArray[i][j].setIcon(new ImageIcon(imgs[countImg++]));
+                idenBtn.put(count++, btnArray[i][j]);
+                btnArray[i][j].setMargin(new Insets(2, 2, 2, 2));
             }
         }
         buttonEmpty = (JButton) idenBtn.get(0);
@@ -188,13 +181,13 @@ public class Controller {
     }
 
     private void addBoard(ArrayList<Integer> listkey) {
-        btnSufArray = new JButton[rows][cols + 1];
+        btnSufArray = new JButton[rows][cols];
         puzzle.getPnlPlayArea().removeAll();
-        puzzle.getPnlPlayArea().setLayout(new GridLayout(rows, cols + 1, 0, 0));
-        puzzle.getPnlPlayArea().setSize(rows * calChunkHeigh(), (cols + 1) * calChunkWidth());
+        puzzle.getPnlPlayArea().setLayout(new GridLayout(rows, cols, 0, 0));
+        puzzle.getPnlPlayArea().setSize(rows * calChunkHeigh(), (cols) * calChunkWidth());
         int count = 0;
         for (int i = 0; i < rows; i++) {
-            for (int j = 0; j <= cols; j++) {
+            for (int j = 0; j < cols; j++) {
                 JButton btn = (JButton) idenBtn.get(listkey.get(count++));
                 puzzle.getPnlPlayArea().add(btn);
                 btnSufArray[i][j] = btn;
@@ -208,25 +201,18 @@ public class Controller {
         removeAction();
         int count = 0;
         for (int i = 0; i < rows; i++) {
-            for (int j = 0; j <= cols; j++) {
-                if (i != 0 && j == 0) {
-                    count++;
-                    btnSufArray[i][j].addActionListener((ActionEvent e) -> {
-                        System.out.println("hello");                        
-                    });
-                } else {
-                    final int ii = i;
-                    final int jj = j;
-                    final int posi = count++;
-                    btnSufArray[i][j].addActionListener((ActionEvent e) -> {
-                        timeStart = true;
-                        if (checkMove(btnSufArray[ii][jj], jj, ii)) {
+            for (int j = 0; j < cols; j++) {
+                final int ii = i;
+                final int jj = j;
+                final int posi = count++;
+                btnSufArray[i][j].addActionListener((ActionEvent e) -> {
+                    timeStart = true;
+                    if (checkMove(btnSufArray[ii][jj], jj, ii)) {
 //                        System.out.println("huhu");
-                            swapButton(posi);
-                            controlWin();
-                        }
-                    });
-                }
+                        swapButton(posi);
+                        controlWin();
+                    }
+                });
             }
         }
     }
@@ -245,7 +231,7 @@ public class Controller {
         listRandomKey = new ArrayList<>();
         listRandomKey.addAll(idenBtn.keySet());
         Collections.shuffle(listRandomKey);
-        for (int i = 0; i < listRandomKey.size(); i += 1 + cols) {
+        for (int i = 0; i < listRandomKey.size(); i += cols) {
             int current = listRandomKey.get(i);
             for (int j = 0; j < listRandomKey.size(); j++) {
                 if (listRandomKey.get(j) == i) {
@@ -275,7 +261,7 @@ public class Controller {
 
     private int getXButtonEmpty() {
         for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols+1; j++) {
+            for (int j = 0; j < cols; j++) {
                 if (btnSufArray[i][j].equals(buttonEmpty)) {
                     return j;
                 }
@@ -286,7 +272,7 @@ public class Controller {
 
     private int getYButtonEmpty() {
         for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols+1; j++) {
+            for (int j = 0; j < cols; j++) {
                 if (btnSufArray[i][j].equals(buttonEmpty)) {
                     return i;
                 }
@@ -330,7 +316,7 @@ public class Controller {
     }
 
     private boolean checkRight(int xEmpty, int yEmpty, int xCurrent, int yCurrent) {
-        if (xCurrent < cols - 1+1) {
+        if (xCurrent < cols - 1) {
             System.out.println("Right: " + (xEmpty == xCurrent + 1 && yEmpty == yCurrent));
             return xEmpty == xCurrent + 1 && yEmpty == yCurrent;
         }
@@ -340,14 +326,14 @@ public class Controller {
     private void swapButton(int posiCurrent) {
         int posiEmpty = getPosiButtonEmpty();
         for (Integer mem : listRandomKey) {
-            System.out.print(mem+" ");
+            System.out.print(mem + " ");
         }
         System.out.println("");
         listRandomKey.set(posiEmpty, listRandomKey.get(posiCurrent));
         listRandomKey.set(posiCurrent, 0);
         addBoard(listRandomKey);
         for (Integer mem : listRandomKey) {
-            System.out.print(mem+" ");
+            System.out.print(mem + " ");
         }
         System.out.println("");
     }
@@ -441,7 +427,7 @@ public class Controller {
     }
 
     public static void main(String[] args) {
-        Controller controller = new Controller();
+        Controller2 controller = new Controller2();
         controller.control();
     }
 
