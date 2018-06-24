@@ -83,9 +83,9 @@ public class Setting extends javax.swing.JFrame {
 
         cbbPicture.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Picture 1", "Picture 2", "Picture 3", "Picture 4", "Picture 5" }));
 
-        jLabel1.setText("Number Cell Horizon");
+        jLabel1.setText("Number Rows");
 
-        jLabel2.setText("Number Cell Vertical");
+        jLabel2.setText("Number Columns");
 
         btnDefault.setText("Default");
 

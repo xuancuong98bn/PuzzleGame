@@ -5,6 +5,7 @@
  */
 package xephinh;
 
+import DataAcessObject.ControllDataFlows;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -36,6 +37,7 @@ public class Controller2 {
     Setting setting;
     HashMap idenBtn;
     Winner winner;
+    ControllDataFlows conData;
 
     JButton btnArray[][];
     JButton btnSufArray[][];
@@ -50,12 +52,14 @@ public class Controller2 {
     boolean gamePlay;
     boolean timeStart;
     int timeCount;
+    int clicked;
 
     public Controller2() {
         puzzle = new Interface();
         setting = new Setting();
         idenBtn = new HashMap();
         winner = new Winner(puzzle, true);
+        conData = new ControllDataFlows(puzzle);
 
         puzzle.setVisible(true);
         gamePlay = true;
@@ -65,9 +69,11 @@ public class Controller2 {
         imagePath = defaultImg;
         chunks = calChucks();
         timeCount = 0;
+        clicked = 0;
         setBoard();
         initThread();
         time.start();
+        conData.control();
     }
 
     private void initThread() {
@@ -132,6 +138,8 @@ public class Controller2 {
 //                JOptionPane.showInputDialog("You win!!"+"\n"+"Enter you name:");
                 randomBoard();
                 timeCount = 0;
+                puzzle.getLblTimer().setText(timeCount+"");
+                clicked = 0;
             }
         });
 
@@ -208,7 +216,7 @@ public class Controller2 {
                 btnSufArray[i][j].addActionListener((ActionEvent e) -> {
                     timeStart = true;
                     if (checkMove(btnSufArray[ii][jj], jj, ii)) {
-//                        System.out.println("huhu");
+                        clicked ++;
                         swapButton(posi);
                         controlWin();
                     }
@@ -423,6 +431,7 @@ public class Controller2 {
             timeStart = false;
             winner.setVisible(true);
             removeAction();
+            conData.update(name, rows, cols, timeCount, clicked);            
         }
     }
 
