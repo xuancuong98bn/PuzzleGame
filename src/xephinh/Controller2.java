@@ -9,6 +9,8 @@ import DataAcessObject.ControllDataFlows;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
@@ -71,6 +73,7 @@ public class Controller2 {
         timeCount = 0;
         clicked = 0;
         setBoard();
+        setExample();
         initThread();
         time.start();
         conData.control();
@@ -95,6 +98,7 @@ public class Controller2 {
         };
     }
 
+    int posi = 0;
     private void setting() {
         setting.setVisible(true);
         setting.getBtnDefault().addActionListener(new ActionListener() {
@@ -108,12 +112,22 @@ public class Controller2 {
         setting.getBtnOK().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                imagePath = listImage[setting.getCbbPicture().getSelectedIndex()];
+                imagePath = listImage[posi];
                 rows = Integer.parseInt(setting.getTxtCellHorizon().getText());
                 cols = Integer.parseInt(setting.getTxtCellVertical().getText());
                 chunks = calChucks();
                 setBoard();
+                ImageIcon icon = setImageWithSize(posi, puzzle.getLblExample());
+                puzzle.getLblExample().setIcon(icon);
                 setting.setVisible(false);
+            }
+        });
+        setting.getCbbPicture().addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                posi = setting.getCbbPicture().getSelectedIndex();
+                ImageIcon icon = setImageWithSize(posi, setting.getLblBackGround());
+                setting.getLblBackGround().setIcon(icon);
             }
         });
     }
@@ -138,6 +152,7 @@ public class Controller2 {
 //                JOptionPane.showInputDialog("You win!!"+"\n"+"Enter you name:");
                 randomBoard();
                 timeCount = 0;
+                timeStart = false;
                 puzzle.getLblTimer().setText(timeCount+"");
                 clicked = 0;
             }
@@ -166,7 +181,23 @@ public class Controller2 {
             }
         });
     }
+    
+    private ImageIcon setImageWithSize(int posiImage, JLabel bground) {
+        int width = bground.getWidth();
+        int height = bground.getHeight();
+        ImageIcon icon = new ImageIcon(listImage[posiImage]);
+        Image resizeIcon = icon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
+        icon.setImage(resizeIcon);
+        return icon;
+    }
 
+    private void setExample(){
+        ImageIcon iconExPuzzle = setImageWithSize(0, puzzle.getLblExample());
+        ImageIcon iconExSetting = setImageWithSize(0, setting.getLblBackGround());
+        puzzle.getLblExample().setIcon(iconExPuzzle);
+        setting.getLblBackGround().setIcon(iconExSetting);
+    }
+    
     private void setBoard() {
         btnArray = new JButton[rows][cols];
         BufferedImage[] imgs = getImages();

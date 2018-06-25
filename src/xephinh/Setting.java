@@ -7,6 +7,7 @@ package xephinh;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -15,6 +16,10 @@ import javax.swing.JTextField;
  * @author MTC
  */
 public class Setting extends javax.swing.JFrame {
+
+    public JLabel getLblBackGround() {
+        return lblBackGround;
+    }
 
     public JButton getBtnDefault() {
         return btnDefault;
@@ -57,6 +62,7 @@ public class Setting extends javax.swing.JFrame {
     private void initComponents() {
 
         pnlDisplay = new javax.swing.JPanel();
+        lblBackGround = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         cbbPicture = new javax.swing.JComboBox<>();
         jLabel1 = new javax.swing.JLabel();
@@ -74,11 +80,11 @@ public class Setting extends javax.swing.JFrame {
         pnlDisplay.setLayout(pnlDisplayLayout);
         pnlDisplayLayout.setHorizontalGroup(
             pnlDisplayLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 273, Short.MAX_VALUE)
+            .addComponent(lblBackGround, javax.swing.GroupLayout.DEFAULT_SIZE, 273, Short.MAX_VALUE)
         );
         pnlDisplayLayout.setVerticalGroup(
             pnlDisplayLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addComponent(lblBackGround, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         cbbPicture.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Picture 1", "Picture 2", "Picture 3", "Picture 4", "Picture 5" }));
@@ -202,6 +208,7 @@ public class Setting extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JLabel lblBackGround;
     private javax.swing.JPanel pnlDisplay;
     private javax.swing.JTextField txtCellHorizon;
     private javax.swing.JTextField txtCellVertical;

@@ -9,6 +9,8 @@ import DataAcessObject.ControllDataFlows;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
@@ -60,7 +62,7 @@ public class Controller {
         idenBtn = new HashMap();
         winner = new Winner(puzzle, true);
         conData = new ControllDataFlows(puzzle);
-        
+
         puzzle.setVisible(true);
         gamePlay = true;
         timeStart = false;
@@ -71,6 +73,7 @@ public class Controller {
         timeCount = 0;
         clicked = 0;
         setBoard();
+        setExample();
         initThread();
         time.start();
         conData.control();
@@ -95,6 +98,7 @@ public class Controller {
         };
     }
 
+    int posi = 0;
     private void setting() {
         setting.setVisible(true);
         setting.getBtnDefault().addActionListener(new ActionListener() {
@@ -108,12 +112,22 @@ public class Controller {
         setting.getBtnOK().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                imagePath = listImage[setting.getCbbPicture().getSelectedIndex()];
+                imagePath = listImage[posi];
                 rows = Integer.parseInt(setting.getTxtCellHorizon().getText());
                 cols = Integer.parseInt(setting.getTxtCellVertical().getText());
                 chunks = calChucks();
                 setBoard();
-                setting.setVisible(false);
+                ImageIcon icon = setImageWithSize(posi, puzzle.getLblExample());
+                puzzle.getLblExample().setIcon(icon);
+                setting.setVisible(false);                
+            }
+        });
+        setting.getCbbPicture().addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                posi = setting.getCbbPicture().getSelectedIndex();
+                ImageIcon icon = setImageWithSize(posi, setting.getLblBackGround());
+                setting.getLblBackGround().setIcon(icon);
             }
         });
     }
@@ -138,7 +152,8 @@ public class Controller {
 //                JOptionPane.showInputDialog("You win!!"+"\n"+"Enter you name:");
                 randomBoard();
                 timeCount = 0;
-                puzzle.getLblTimer().setText(timeCount+"");
+                timeStart = false;
+                puzzle.getLblTimer().setText(timeCount + "");
                 clicked = 0;
             }
         });
@@ -164,9 +179,25 @@ public class Controller {
                     winner.dispose();
                 }
             }
-        });
+        });        
     }
 
+    private ImageIcon setImageWithSize(int posiImage, JLabel bground) {
+        int width = bground.getWidth();
+        int height = bground.getHeight();
+        ImageIcon icon = new ImageIcon(listImage[posiImage]);
+        Image resizeIcon = icon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
+        icon.setImage(resizeIcon);
+        return icon;
+    }
+
+    private void setExample(){
+        ImageIcon iconExPuzzle = setImageWithSize(0, puzzle.getLblExample());
+        ImageIcon iconExSetting = setImageWithSize(0, setting.getLblBackGround());
+        puzzle.getLblExample().setIcon(iconExPuzzle);
+        setting.getLblBackGround().setIcon(iconExSetting);
+    }
+    
     private void setBoard() {
         btnArray = new JButton[rows][cols + 1];
         BufferedImage[] imgs = getImages();
@@ -220,7 +251,7 @@ public class Controller {
                 if (i != 0 && j == 0) {
                     count++;
                     btnSufArray[i][j].addActionListener((ActionEvent e) -> {
-                        System.out.println("hello");                        
+                        System.out.println("hello");
                     });
                 } else {
                     final int ii = i;
@@ -283,7 +314,7 @@ public class Controller {
 
     private int getXButtonEmpty() {
         for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols+1; j++) {
+            for (int j = 0; j < cols + 1; j++) {
                 if (btnSufArray[i][j].equals(buttonEmpty)) {
                     return j;
                 }
@@ -294,7 +325,7 @@ public class Controller {
 
     private int getYButtonEmpty() {
         for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols+1; j++) {
+            for (int j = 0; j < cols + 1; j++) {
                 if (btnSufArray[i][j].equals(buttonEmpty)) {
                     return i;
                 }
@@ -338,7 +369,7 @@ public class Controller {
     }
 
     private boolean checkRight(int xEmpty, int yEmpty, int xCurrent, int yCurrent) {
-        if (xCurrent < cols - 1+1) {
+        if (xCurrent < cols - 1 + 1) {
             System.out.println("Right: " + (xEmpty == xCurrent + 1 && yEmpty == yCurrent));
             return xEmpty == xCurrent + 1 && yEmpty == yCurrent;
         }
@@ -348,14 +379,14 @@ public class Controller {
     private void swapButton(int posiCurrent) {
         int posiEmpty = getPosiButtonEmpty();
         for (Integer mem : listRandomKey) {
-            System.out.print(mem+" ");
+            System.out.print(mem + " ");
         }
         System.out.println("");
         listRandomKey.set(posiEmpty, listRandomKey.get(posiCurrent));
         listRandomKey.set(posiCurrent, 0);
         addBoard(listRandomKey);
         for (Integer mem : listRandomKey) {
-            System.out.print(mem+" ");
+            System.out.print(mem + " ");
         }
         System.out.println("");
     }
@@ -445,7 +476,7 @@ public class Controller {
             timeStart = false;
             winner.setVisible(true);
             removeAction();
-            conData.update(name, rows, cols, timeCount, clicked);  
+            conData.update(name, rows, cols, timeCount, clicked);
         }
     }
 

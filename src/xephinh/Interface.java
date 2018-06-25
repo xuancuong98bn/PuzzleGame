@@ -16,6 +16,10 @@ import javax.swing.JTable;
  */
 public class Interface extends javax.swing.JFrame {
 
+    public JLabel getLblExample() {
+        return lblExample;
+    }
+
     public JButton getBtnRestart() {
         return btnRestart;
     }
@@ -62,6 +66,7 @@ public class Interface extends javax.swing.JFrame {
     private void initComponents() {
 
         pnlSample = new javax.swing.JPanel();
+        lblExample = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblRank = new javax.swing.JTable();
@@ -79,11 +84,11 @@ public class Interface extends javax.swing.JFrame {
         pnlSample.setLayout(pnlSampleLayout);
         pnlSampleLayout.setHorizontalGroup(
             pnlSampleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 243, Short.MAX_VALUE)
+            .addComponent(lblExample, javax.swing.GroupLayout.DEFAULT_SIZE, 243, Short.MAX_VALUE)
         );
         pnlSampleLayout.setVerticalGroup(
             pnlSampleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 227, Short.MAX_VALUE)
+            .addComponent(lblExample, javax.swing.GroupLayout.DEFAULT_SIZE, 227, Short.MAX_VALUE)
         );
 
         jLabel2.setText("Top Player:");
@@ -258,6 +263,7 @@ public class Interface extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel lblExample;
     private javax.swing.JLabel lblTimer;
     private javax.swing.JPanel pnlPlayArea;
     private javax.swing.JPanel pnlSample;
