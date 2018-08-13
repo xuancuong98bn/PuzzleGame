@@ -99,6 +99,7 @@ public class Controller2 {
     }
 
     int posi = 0;
+
     private void setting() {
         setting.setVisible(true);
         setting.getBtnDefault().addActionListener(new ActionListener() {
@@ -112,14 +113,31 @@ public class Controller2 {
         setting.getBtnOK().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                boolean fixFlag = true;
                 imagePath = listImage[posi];
-                rows = Integer.parseInt(setting.getTxtCellHorizon().getText());
-                cols = Integer.parseInt(setting.getTxtCellVertical().getText());
-                chunks = calChucks();
-                setBoard();
-                ImageIcon icon = setImageWithSize(posi, puzzle.getLblExample());
-                puzzle.getLblExample().setIcon(icon);
-                setting.setVisible(false);
+                try {
+                    rows = Integer.parseInt(setting.getTxtCellHorizon().getText());
+                    cols = Integer.parseInt(setting.getTxtCellVertical().getText());
+                    if (rows <= 2 || cols <= 2 || rows > 10 || cols > 10) {                         
+                        throw new NumberFormatException();
+                    }
+                } catch (NumberFormatException ex) {
+                    System.out.println("hákjdhk");
+                    fixFlag = false;
+                    JOptionPane.showMessageDialog(setting, "DCM nhap lai de");
+
+                }
+                if (fixFlag) {
+                    chunks = calChucks();
+                    setBoard();
+                    removeAction();
+                    timeCount = 0;
+                    timeStart = false;
+                    clicked = 0;
+                    ImageIcon icon = setImageWithSize(posi, puzzle.getLblExample());
+                    puzzle.getLblExample().setIcon(icon);
+                    setting.setVisible(false);
+                }
             }
         });
         setting.getCbbPicture().addItemListener(new ItemListener() {
@@ -153,7 +171,7 @@ public class Controller2 {
                 randomBoard();
                 timeCount = 0;
                 timeStart = false;
-                puzzle.getLblTimer().setText(timeCount+"");
+                puzzle.getLblTimer().setText(timeCount + "");
                 clicked = 0;
             }
         });
@@ -181,7 +199,7 @@ public class Controller2 {
             }
         });
     }
-    
+
     private ImageIcon setImageWithSize(int posiImage, JLabel bground) {
         int width = bground.getWidth();
         int height = bground.getHeight();
@@ -191,13 +209,13 @@ public class Controller2 {
         return icon;
     }
 
-    private void setExample(){
+    private void setExample() {
         ImageIcon iconExPuzzle = setImageWithSize(0, puzzle.getLblExample());
         ImageIcon iconExSetting = setImageWithSize(0, setting.getLblBackGround());
         puzzle.getLblExample().setIcon(iconExPuzzle);
         setting.getLblBackGround().setIcon(iconExSetting);
     }
-    
+
     private void setBoard() {
         btnArray = new JButton[rows][cols];
         BufferedImage[] imgs = getImages();
@@ -247,7 +265,7 @@ public class Controller2 {
                 btnSufArray[i][j].addActionListener((ActionEvent e) -> {
                     timeStart = true;
                     if (checkMove(btnSufArray[ii][jj], jj, ii)) {
-                        clicked ++;
+                        clicked++;
                         swapButton(posi);
                         controlWin();
                     }
@@ -270,15 +288,15 @@ public class Controller2 {
         listRandomKey = new ArrayList<>();
         listRandomKey.addAll(idenBtn.keySet());
         Collections.shuffle(listRandomKey);
-        for (int i = 0; i < listRandomKey.size(); i += cols) {
-            int current = listRandomKey.get(i);
-            for (int j = 0; j < listRandomKey.size(); j++) {
-                if (listRandomKey.get(j) == i) {
-                    listRandomKey.set(j, current);
-                }
+
+        int current = listRandomKey.get(0);
+        for (int j = 0; j < listRandomKey.size(); j++) {
+            if (listRandomKey.get(j) == 0) {
+                listRandomKey.set(j, current);
             }
-            listRandomKey.set(i, i);
         }
+        listRandomKey.set(0, 0);
+
         addBoard(listRandomKey);
     }
 
@@ -462,7 +480,7 @@ public class Controller2 {
             timeStart = false;
             winner.setVisible(true);
             removeAction();
-            conData.update(name, rows, cols, timeCount, clicked);            
+            conData.update(name, rows, cols, timeCount, clicked);
         }
     }
 
@@ -476,7 +494,7 @@ public class Controller2 {
                 "./image/background4.png", "./image/background5.png"};
 
     private final String defaultImg = listImage[0];
-    private final int defaultCellHorizon = 2;
-    private final int defaultCellVertical = 2;
+    private final int defaultCellHorizon = 3;
+    private final int defaultCellVertical = 3;
 
 }
